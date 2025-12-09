@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
+}
+
+model mercadoLivre {
+  id    Int     @id @default(autoincrement())
+  token String 
+  refreshToken String @default("") 
+  name String  
+}
+
+
+model Product {
+  id    Int     @id @default(autoincrement())
+  name  String
+  sku   String
+  isDeleted Boolean? @default(false)
+  variation Variation[]
+}
+
+model Variation {
+  id    Int     @id @default(autoincrement())
+  sku   String
+  name  String
+  allocatedStock Int @default(0)
+  stock Int @default(0)
+  isDeleted Boolean? @default(false)
+  produto Product @relation(fields: [productId],  references: [id])
+  productId Int
+}
