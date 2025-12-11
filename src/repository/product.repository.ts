@@ -1,6 +1,7 @@
 import { mercadoLivre } from "@prisma/client";
 import MainMlRepository from "./main";
 import { IProduct, IProductPyloadCreate, IProductPyloadUpdate, IProductResponseSimple } from "../types/product.types";
+import { IVariationPyloadCreate } from "../types/variation.types";
 
 export default class AccountMlRepository extends MainMlRepository {
     constructor() {
@@ -26,7 +27,11 @@ export default class AccountMlRepository extends MainMlRepository {
     async get(): Promise<Array<IProduct>> {
         return this.prisma.product.findMany({
             where: { isDeleted: false },
-            include: { variation: true }
+            include: { 
+                variation: {
+                    orderBy: { name: 'desc' }
+                }
+            }
         });
 
     }
@@ -39,9 +44,14 @@ export default class AccountMlRepository extends MainMlRepository {
         });
     }
 
-    async create(_data: IProductPyloadCreate): Promise<IProductResponseSimple> {
+    async create(_data: IProductPyloadCreate, variation: Omit<IVariationPyloadCreate, "productId">): Promise<IProductResponseSimple> {
         return this.prisma.product.create({
-            data: _data,
+            data: {
+                ..._data,
+                variation: {
+                    create: variation
+                }
+            },
             select: { id: true }
         });
     }

@@ -14,7 +14,11 @@ export default class ProductServices {
     async create(_data: any): Promise<IProductResponseSimple> {
         // validar formulario da forma correta
 
-        return this.rpy.create(_data);
+        const variation = _data.variation;
+
+        console.log(_data)
+
+        return this.rpy.create(_data, variation);
     }
 
     async update({ id: _id }: any, _data: any) {
